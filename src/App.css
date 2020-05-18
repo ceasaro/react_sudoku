@@ -1,38 +1,68 @@
-.App {
-  text-align: center;
+.sudoku {
+    box-sizing: border-box;
+    height: 950px;
+    width: 950px;
+    margin: 0;
+
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.sudoku-row {
+    height: 310px;
+    width: 100%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.block {
+    border: 5px black solid;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 310px;
+    width: 310px;
+    margin: 0;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.block-row {
+    height: 100px;
+    width: 100%;
 }
 
-.App-link {
-  color: #61dafb;
+.cell {
+    border: 1px black solid;
+    display: inline-block;
+    height: 100px;
+    margin: 0;
+    position: relative;
+    width: 100px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.number {
+    color: #00a125;
+    font-size: 35pt;
+    font-weight: bold;
+    left: 37px;
+    position: absolute;
+    top: 14px;
+}
+
+.fixed-options {
+    color: #001ba1;
+    display: inline-block;
+    padding-top: 37px;
+    text-align: center;
+    width: 100%;
+    /*position: absolute;*/
+    top: 14px;
+}
+
+.options-top {
+    color: #f58400;
+    left: 8px;
+    position: absolute;
+    top: 5px;
+}
+
+.options-bottom {
+    color: #f58400;
+    bottom: 5px;
+    position: absolute;
+    right: 8px;
 }
