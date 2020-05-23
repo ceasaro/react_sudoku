@@ -97,7 +97,6 @@ class SudokuGame extends React.Component {
         let y = this.state.activeY;
         this.updateCell(x,y, {'number': null})
         let numbers = this.getInvalidNumbers(x, y);
-        console.log(numbers);
         this.updateCell(x,y, {'number': number, 'faulty': numbers.has(number)})
     }
     updateCell(x, y, newData) {
