@@ -38,8 +38,13 @@
     background-color: #fffda4;
 }
 
-.cell.editable {
-    border: 3px #00a125 solid;
+.cell.editable .number {
+    border-bottom: 2px black solid;
+    animation: 1s blink step-end infinite alternate;
+}
+
+.cell.faulty .number {
+    color: #ff0000;
 }
 
 .number {
@@ -58,11 +63,6 @@
     50% {
         border-color: transparent;
     }
-}
-
-.cell.editable .number {
-    border-bottom: 2px black solid;
-    animation: 1s blink step-end infinite alternate;
 }
 
 .number.given {

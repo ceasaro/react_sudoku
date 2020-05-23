@@ -3,6 +3,7 @@ import Block from './Block';
 import { validate } from './gameUtils';
 import { InitialCellData } from './Cell';
 import Row from 'react-bootstrap/Row';
+import { forEach } from 'react-bootstrap/cjs/ElementChildren';
 
 function initializeData(data) {
     let gameData = [];
@@ -62,7 +63,7 @@ class SudokuGame extends React.Component {
             keyCode = e.keyCode - 48;
         }
         if (keyCode >= 49 && keyCode <= 57) {
-            this.setNumber(String.fromCharCode(keyCode))
+            this.setNumber(Number.parseInt(String.fromCharCode(keyCode)))
         }
     }
 
@@ -92,7 +93,12 @@ class SudokuGame extends React.Component {
     }
 
     setNumber(number) {
-        this.updateCell(this.state.activeX,this.state.activeY, {'number': number})
+        let x = this.state.activeX;
+        let y = this.state.activeY;
+        this.updateCell(x,y, {'number': null})
+        let numbers = this.getInvalidNumbers(x, y);
+        console.log(numbers);
+        this.updateCell(x,y, {'number': number, 'faulty': numbers.has(number)})
     }
     updateCell(x, y, newData) {
         this.setState(state => {
@@ -136,6 +142,48 @@ class SudokuGame extends React.Component {
                 ]
             ]
         }
+    }
+
+    getInvalidNumbers(x, y) {
+        return new Set([...this.getRowNumbers(x), ...this.getColumnNumbers(y), ...this.getBlockNumbers(x, y)])
+    }
+
+    getRowNumbers(rowIndex) {
+        let numbers = new Set();
+        this.state.gameData[rowIndex].forEach(function(cellData) {
+            let number = cellData.given || cellData.number;
+            if (validate(number)) {
+                numbers.add(number)
+            }
+        })
+        return numbers;
+    }
+
+    getColumnNumbers(colIndex) {
+        let numbers = new Set();
+        this.state.gameData.forEach(function(rowData) {
+            let number = rowData[colIndex].given || rowData[colIndex].number;
+            if (validate(number)) {
+                numbers.add(number)
+            }
+        })
+        return numbers;
+    }
+
+    getBlockNumbers(x, y) {
+        let numbers = new Set();
+        let blockX = Math.round(x/3);
+        let blockY = Math.round(y/3);
+        for (let x=blockX; x<blockX+3; x++) {
+            for (let y=blockY; y<blockY+3; y++) {
+                let cellData = this.state.gameData[x][y]
+                let number = cellData.given || cellData.number;
+                if (validate(number)) {
+                    numbers.add(number);
+                }
+            }
+        }
+        return numbers;
     }
 }
 

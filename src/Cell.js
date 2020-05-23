@@ -3,6 +3,7 @@ import * as React from 'react';
 const InitialCellData = {
     'selected': false,
     'editable': false,
+    'faulty': false,
     'given': null,
     'number': null,
     'fixed': [],
@@ -27,7 +28,7 @@ class Cell extends React.Component {
             </div>
         }
         return (
-            <div className={`cell ${this.props.selected?'selected': ''} ${this.props.editable?'editable': ''}`}
+            <div className={`cell ${this.props.selected?'selected': ''} ${this.props.editable?'editable': ''} ${this.props.faulty?'faulty': ''}`}
                  onClick={(e) => this.props.handleCellClick(this.props.x, this.props.y, e.ctrlKey)}>
                 {cell}
             </div>
