@@ -22,7 +22,19 @@ function initializeData(data) {
 class SudokuGame extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { gameData: initializeData(props.data) };
+        this.state = {
+            gameData: initializeData(props.data),
+            activeX: null,
+            activeY: null,
+        };
+    }
+
+    componentDidMount() {
+        document.addEventListener("keydown", this.keyPressed.bind(this), false);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.keyPressed.bind(this), false);
     }
 
     handleCellClick(x, y, ctrlKey) {
@@ -33,33 +45,25 @@ class SudokuGame extends React.Component {
         } else {
             gameData.forEach(function(row, x) {
                 row.forEach(function(given, y) {
-                    sudokuGame.updateCell(x, y, {editable: false})
+                    sudokuGame.updateCell(x, y, { editable: false })
                 })
             });
             if (!gameData[x][y].given) {
+                this.setState({'activeX': x, 'activeY': y})
                 sudokuGame.updateCell(x, y, { editable: true })
             }
         }
     }
 
-    updateCell(x, y, newData) {
-        this.setState(state => {
-            const gameData = state.gameData.map((row, _x) => {
-                if (x === _x) {
-                    return row.map((cellData, _y) => {
-                        if (y === _y) {
-                            return { ...cellData, ...newData }
-                        } else {
-                            return cellData
-                        }
-                    });
-                } else {
-                    return row;
-                }
-            });
-
-            return { gameData, };
-        });
+    keyPressed(e) {
+        let keyCode = e.keyCode;
+        if (e.keyCode >= 97 && e.keyCode <= 105) {
+            // correct pressed keypad number keys
+            keyCode = e.keyCode - 48;
+        }
+        if (keyCode >= 49 && keyCode <= 57) {
+            this.setNumber(String.fromCharCode(keyCode))
+        }
     }
 
     render() {
@@ -85,6 +89,29 @@ class SudokuGame extends React.Component {
                 </div>
             </Row>
         )
+    }
+
+    setNumber(number) {
+        this.updateCell(this.state.activeX,this.state.activeY, {'number': number})
+    }
+    updateCell(x, y, newData) {
+        this.setState(state => {
+            const gameData = state.gameData.map((row, _x) => {
+                if (x === _x) {
+                    return row.map((cellData, _y) => {
+                        if (y === _y) {
+                            return { ...cellData, ...newData }
+                        } else {
+                            return cellData
+                        }
+                    });
+                } else {
+                    return row;
+                }
+            });
+
+            return { gameData, };
+        });
     }
 
     getBlockData(blockX, blockY) {

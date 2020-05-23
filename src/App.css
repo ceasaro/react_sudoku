@@ -33,20 +33,38 @@
     position: relative;
     width: 100px;
 }
+
 .cell.selected {
     background-color: #fffda4;
 }
+
 .cell.editable {
     border: 3px #00a125 solid;
 }
+
 .number {
     color: #00a125;
     font-size: 35pt;
     font-weight: bold;
-    left: 37px;
+    left: 32px;
     position: absolute;
+    text-align: center;
     top: 14px;
+    width: 30px;
+    height: 50px;
 }
+
+@keyframes blink {
+    50% {
+        border-color: transparent;
+    }
+}
+
+.cell.editable .number {
+    border-bottom: 2px black solid;
+    animation: 1s blink step-end infinite alternate;
+}
+
 .number.given {
     color: #000;
 }
