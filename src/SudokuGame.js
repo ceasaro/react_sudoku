@@ -3,7 +3,6 @@ import Block from './Block';
 import { validate } from './gameUtils';
 import { InitialCellData } from './Cell';
 import Row from 'react-bootstrap/Row';
-import { forEach } from 'react-bootstrap/cjs/ElementChildren';
 
 function initializeData(data) {
     let gameData = [];
