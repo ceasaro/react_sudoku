@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import SudokuGame from './SudokuGame';
+import { SudokuData } from './puzzle_data';
 
 function App() {
     return (
@@ -14,7 +15,7 @@ function App() {
                     <h1>Sudoku tool</h1>
                 </Col>
             </Row>
-            <SudokuGame></SudokuGame>
+            <SudokuGame data={SudokuData}/>
         </Container>
     );
 }

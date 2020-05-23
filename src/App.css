@@ -33,7 +33,12 @@
     position: relative;
     width: 100px;
 }
-
+.cell.selected {
+    background-color: #fffda4;
+}
+.cell.editable {
+    border: 3px #00a125 solid;
+}
 .number {
     color: #00a125;
     font-size: 35pt;
@@ -42,15 +47,16 @@
     position: absolute;
     top: 14px;
 }
+.number.given {
+    color: #000;
+}
 
 .fixed-options {
     color: #001ba1;
-    display: inline-block;
-    padding-top: 37px;
     text-align: center;
     width: 100%;
-    /*position: absolute;*/
-    top: 14px;
+    position: absolute;
+    top: 38px;
 }
 
 .options-top {

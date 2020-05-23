@@ -1,32 +1,114 @@
 import * as React from 'react';
 import Block from './Block';
+import { validate } from './gameUtils';
+import { InitialCellData } from './Cell';
 import Row from 'react-bootstrap/Row';
 
-let sudoku = [[]];
+function initializeData(data) {
+    let gameData = [];
+    data.forEach(function(row, x) {
+        gameData[x] = []
+        row.forEach(function(given, y) {
+            let data = { ...InitialCellData }
+            data.given = validate(given);
+            data.x = x
+            data.y = y
+            gameData[x][y] = data
+        })
+    })
+    return gameData;
+}
 
 class SudokuGame extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { gameData: initializeData(props.data) };
+    }
+
+    handleCellClick(x, y, ctrlKey) {
+        let gameData = this.state.gameData;
+        let sudokuGame = this;
+        if (ctrlKey) {
+            this.updateCell(x, y, { selected: true })
+        } else {
+            gameData.forEach(function(row, x) {
+                row.forEach(function(given, y) {
+                    sudokuGame.updateCell(x, y, {editable: false})
+                })
+            });
+            if (!gameData[x][y].given) {
+                sudokuGame.updateCell(x, y, { editable: true })
+            }
+        }
+    }
+
+    updateCell(x, y, newData) {
+        this.setState(state => {
+            const gameData = state.gameData.map((row, _x) => {
+                if (x === _x) {
+                    return row.map((cellData, _y) => {
+                        if (y === _y) {
+                            return { ...cellData, ...newData }
+                        } else {
+                            return cellData
+                        }
+                    });
+                } else {
+                    return row;
+                }
+            });
+
+            return { gameData, };
+        });
+    }
+
     render() {
         return (
             <Row>
                 <div className="sudoku">
                     <div className="sudoku-row">
-                        <Block></Block>
-                        <Block></Block>
-                        <Block></Block>
+                        <Block data={this.getBlockData(0, 0)}
+                               handleCellClick={this.handleCellClick.bind(this)} />
+                        <Block data={this.getBlockData(0, 1)} handleCellClick={this.handleCellClick.bind(this)} />
+                        <Block data={this.getBlockData(0, 2)} handleCellClick={this.handleCellClick.bind(this)} />
                     </div>
                     <div className="sudoku-row">
-                        <Block></Block>
-                        <Block></Block>
-                        <Block></Block>
+                        <Block data={this.getBlockData(1, 0)} handleCellClick={this.handleCellClick.bind(this)} />
+                        <Block data={this.getBlockData(1, 1)} handleCellClick={this.handleCellClick.bind(this)} />
+                        <Block data={this.getBlockData(1, 2)} handleCellClick={this.handleCellClick.bind(this)} />
                     </div>
                     <div className="sudoku-row">
-                        <Block></Block>
-                        <Block></Block>
-                        <Block></Block>
+                        <Block data={this.getBlockData(2, 0)} handleCellClick={this.handleCellClick.bind(this)} />
+                        <Block data={this.getBlockData(2, 1)} handleCellClick={this.handleCellClick.bind(this)} />
+                        <Block data={this.getBlockData(2, 2)} handleCellClick={this.handleCellClick.bind(this)} />
                     </div>
                 </div>
             </Row>
         )
+    }
+
+    getBlockData(blockX, blockY) {
+        let row = blockX * 3;
+        let col = blockY * 3;
+        if (this.state.gameData) {
+            return [
+                [
+                    this.state.gameData[row][col],
+                    this.state.gameData[row][col + 1],
+                    this.state.gameData[row][col + 2],
+                ],
+                [
+                    this.state.gameData[row + 1][col],
+                    this.state.gameData[row + 1][col + 1],
+                    this.state.gameData[row + 1][col + 2],
+                ],
+                [
+                    this.state.gameData[row + 2][col],
+                    this.state.gameData[row + 2][col + 1],
+                    this.state.gameData[row + 2][col + 2],
+                ]
+            ]
+        }
     }
 }
 
