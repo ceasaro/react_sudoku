@@ -37,10 +37,13 @@ class SudokuGame extends React.Component {
         document.removeEventListener("keydown", this.keyPressed.bind(this), false);
     }
 
-    handleCellClick(x, y, ctrlKey) {
+    handleCellClick(event, x, y) {
         let gameData = this.state.gameData;
         let sudokuGame = this;
-        if (ctrlKey) {
+        if (event.ctrlKey && event.shiftKey) {
+
+        }
+        else if (event.ctrlKey) {
             this.updateCell(x, y, { selected: true })
         } else {
             gameData.forEach(function(row, x) {
@@ -101,6 +104,7 @@ class SudokuGame extends React.Component {
         this.updateCell(x,y, {'number': null})
         let numbers = this.getInvalidNumbers(x, y);
         this.updateCell(x,y, {'number': number, 'faulty': numbers.has(number)})
+        this.updatePossibleNumbers();
     }
     updateCell(x, y, newData) {
         this.setState(state => {
@@ -174,13 +178,14 @@ class SudokuGame extends React.Component {
 
     getBlockNumbers(x, y) {
         let numbers = new Set();
-        let blockX = Math.round(x/3);
-        let blockY = Math.round(y/3);
-        for (let x=blockX; x<blockX+3; x++) {
-            for (let y=blockY; y<blockY+3; y++) {
-                let cellData = this.state.gameData[x][y]
+        let blockX = Math.floor(x/3)*3;
+        let blockY = Math.floor(y/3)*3;
+        for (let _x=blockX; _x<blockX+3; _x++) {
+            for (let _y=blockY; _y<blockY+3; _y++) {
+                let cellData = this.state.gameData[_x][_y];
                 let number = cellData.given || cellData.number;
                 if (validate(number)) {
+                    console.log(`x:${_x}, y:${_y}, number:${number} `)
                     numbers.add(number);
                 }
             }
