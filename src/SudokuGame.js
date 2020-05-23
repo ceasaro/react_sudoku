@@ -64,6 +64,10 @@ class SudokuGame extends React.Component {
         if (keyCode >= 49 && keyCode <= 57) {
             this.setNumber(Number.parseInt(String.fromCharCode(keyCode)))
         }
+        if (keyCode === 8 || keyCode === 46) {
+            // clear input
+            this.setNumber(null);
+        }
     }
 
     render() {
