@@ -45,7 +45,7 @@ class SudokuGame extends React.Component {
         let gameData = this.state.gameData;
         let sudokuGame = this;
         if (event.ctrlKey && event.shiftKey) {
-
+            this.selectRange(x, y);
         } else if (event.ctrlKey) {
             this.updateCell(x, y, { selected: !this.state.gameData[x][y].selected })
         } else {
@@ -125,6 +125,8 @@ class SudokuGame extends React.Component {
                 </Col>
                 <Col>
                     <h3>Menu</h3>
+                    <Button variant="outline-danger" block
+                            onClick={(e) => this.clearSelected()}>Clear selection</Button>
                     <Button variant="outline-danger" block active={this.state.showAllOptions}
                             onClick={(e) => this.toggleShowOptions()}>Show options</Button>
                     <Button variant="outline-danger" block disabled={!this.state.showAllOptions}
@@ -187,6 +189,39 @@ class SudokuGame extends React.Component {
                 ]
             ]
         }
+    }
+
+    selectRange(x, y) {
+        let sudokuGame = this;
+        let newGameData = cloneDeep(this.state.gameData);
+        let newSelected = !newGameData[x][y].selected
+        // select row
+        newGameData[x].forEach(function(cellData) {
+            cellData.selected = newSelected
+        });
+        // select column
+        newGameData.forEach(function(rowData) {
+            rowData[y].selected = newSelected
+        })
+        // select block
+        let blockX = Math.floor(x / 3) * 3;
+        let blockY = Math.floor(y / 3) * 3;
+        for (let _x = blockX; _x < blockX + 3; _x++) {
+            for (let _y = blockY; _y < blockY + 3; _y++) {
+                newGameData[_x][_y].selected = newSelected;
+            }
+        }
+        this.setState({ 'gameData': newGameData })
+    }
+
+    clearSelected() {
+        let newGameData = cloneDeep(this.state.gameData);
+        newGameData.forEach(function(rowData) {
+            rowData.forEach(function(cell) {
+                cell.selected = false;
+            })
+        })
+        this.setState({ 'gameData': newGameData })
     }
 
     getInvalidNumbers(x, y) {
@@ -253,11 +288,12 @@ class SudokuGame extends React.Component {
         let newGameData = cloneDeep(this.state.gameData);
         newGameData.forEach(function(rowData) {
             rowData.forEach(function(cell) {
-                cell.possibleNumbers = []
+                cell.possibleNumbers = [];
             })
         })
         this.setState({ 'gameData': newGameData })
     }
+
 }
 
 export default SudokuGame
