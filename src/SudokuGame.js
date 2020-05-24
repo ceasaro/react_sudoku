@@ -87,10 +87,13 @@ class SudokuGame extends React.Component {
     }
 
     toggleAutoFill() {
-        this.updatePossibleNumbers({autoFill: true});
+        this.updatePossibleNumbers({ autoFill: true });
     }
 
     render() {
+        let numberButtons =
+            <Button variant="outline-info" block onClick={(e) => this.selectNumber(1)}>1</Button>
+
         return (
             <Row>
                 <Col xs={10}>
@@ -125,7 +128,11 @@ class SudokuGame extends React.Component {
                 </Col>
                 <Col>
                     <h3>Menu</h3>
-                    <Button variant="outline-danger" block
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((value => {
+                        return <Button variant="outline-info" block
+                                       onClick={(e) => this.selectNumber(value)}>{value}</Button>
+                    }))}
+                    <Button variant="outline-info" block
                             onClick={(e) => this.clearSelected()}>Clear selection</Button>
                     <Button variant="outline-danger" block active={this.state.showAllOptions}
                             onClick={(e) => this.toggleShowOptions()}>Show options</Button>
@@ -192,36 +199,61 @@ class SudokuGame extends React.Component {
     }
 
     selectRange(x, y) {
-        let sudokuGame = this;
         let newGameData = cloneDeep(this.state.gameData);
         let newSelected = !newGameData[x][y].selected
+        this._selectRange(newGameData, newSelected, x, y);
+        this.setState({ 'gameData': newGameData })
+    }
+
+    _selectRange(gameData, selected, x, y) {
         // select row
-        newGameData[x].forEach(function(cellData) {
-            cellData.selected = newSelected
+        gameData[x].forEach(function(cellData) {
+            cellData.selected = selected
         });
         // select column
-        newGameData.forEach(function(rowData) {
-            rowData[y].selected = newSelected
+        gameData.forEach(function(rowData) {
+            rowData[y].selected = selected
         })
         // select block
         let blockX = Math.floor(x / 3) * 3;
         let blockY = Math.floor(y / 3) * 3;
         for (let _x = blockX; _x < blockX + 3; _x++) {
             for (let _y = blockY; _y < blockY + 3; _y++) {
-                newGameData[_x][_y].selected = newSelected;
+                gameData[_x][_y].selected = selected;
             }
         }
+    }
+
+    selectNumber(number) {
+        let sudokuGame = this;
+        let newGameData = cloneDeep(this.state.gameData);
+        this._clearSelected(newGameData);
+        newGameData.forEach(function(rowData) {
+            rowData.forEach(function(cell) {
+                if (cell.number || cell.given) {
+                    if (cell.number === number || cell.given === number) {
+                        sudokuGame._selectRange(newGameData, true, cell.x, cell.y)
+                    } else {
+                        cell.selected = true
+                    }
+                }
+            })
+        })
         this.setState({ 'gameData': newGameData })
     }
 
     clearSelected() {
         let newGameData = cloneDeep(this.state.gameData);
+        this._clearSelected(newGameData);
+        this.setState({ 'gameData': newGameData })
+    }
+
+    _clearSelected(newGameData) {
         newGameData.forEach(function(rowData) {
             rowData.forEach(function(cell) {
                 cell.selected = false;
             })
         })
-        this.setState({ 'gameData': newGameData })
     }
 
     getInvalidNumbers(x, y) {
