@@ -1,17 +1,17 @@
 import * as React from 'react';
 
 const InitialCellData = {
-    'selected': false,
-    'editable': false,
-    'faulty': false,
-    'given': null,
-    'number': null,
-    'fixed': [],
-    'optionsTop': [],
-    'optionsBottom': [],
-    'possibleNumbers': [],
-    'x': null,
-    'y': null
+    selected: false,
+    editable: false,
+    faulty: false,
+    given: null,
+    number: null,
+    fixed: [],
+    optionsTop: [],
+    optionsBottom: [],
+    possibleNumbers: [],
+    x: null,
+    y: null
 }
 
 class Cell extends React.Component {

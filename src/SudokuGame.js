@@ -76,14 +76,18 @@ class SudokuGame extends React.Component {
         }
     }
 
-    showOptions() {
-        let showAllOptionsState = !this.state.showAllOptions;
-        this.setState({ showAllOptions: showAllOptionsState});
-        if (showAllOptionsState) {
+    toggleShowOptions() {
+        let newShowAllOptions = !this.state.showAllOptions;
+        this.setState({ showAllOptions: newShowAllOptions });
+        if (newShowAllOptions) {
             this.updatePossibleNumbers();
         } else {
             this.clearPossibleNumbers();
         }
+    }
+
+    toggleAutoFill() {
+        this.updatePossibleNumbers({autoFill: true});
     }
 
     render() {
@@ -122,7 +126,9 @@ class SudokuGame extends React.Component {
                 <Col>
                     <h3>Menu</h3>
                     <Button variant="outline-danger" block active={this.state.showAllOptions}
-                            onClick={(e) => this.showOptions()}>Show options</Button>
+                            onClick={(e) => this.toggleShowOptions()}>Show options</Button>
+                    <Button variant="outline-danger" block disabled={!this.state.showAllOptions}
+                            onClick={(e) => this.toggleAutoFill()}>Auto fill</Button>
                 </Col>
             </Row>
         )
@@ -218,7 +224,6 @@ class SudokuGame extends React.Component {
                 let cellData = this.state.gameData[_x][_y];
                 let number = cellData.given || cellData.number;
                 if (validate(number)) {
-                    console.log(`x:${_x}, y:${_y}, number:${number} `)
                     numbers.add(number);
                 }
             }
@@ -226,7 +231,8 @@ class SudokuGame extends React.Component {
         return numbers;
     }
 
-    updatePossibleNumbers() {
+    updatePossibleNumbers(options) {
+        let _options = { ...{ autoFill: false }, ...options };
         let sudokuGame = this;
         let newGameData = cloneDeep(this.state.gameData);
         newGameData.forEach(function(rowData) {
@@ -234,13 +240,16 @@ class SudokuGame extends React.Component {
                 if (!cell.given && !cell.number) {
                     let invalidNumbers = sudokuGame.getInvalidNumbers(cell.x, cell.y);
                     cell.possibleNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(x => !invalidNumbers.has(x))
+                    if (_options.autoFill && cell.possibleNumbers.length === 1) {
+                        cell.number = cell.possibleNumbers[0];
+                    }
                 }
             })
         })
         this.setState({ 'gameData': newGameData })
     }
 
-     clearPossibleNumbers() {
+    clearPossibleNumbers() {
         let newGameData = cloneDeep(this.state.gameData);
         newGameData.forEach(function(rowData) {
             rowData.forEach(function(cell) {
