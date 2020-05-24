@@ -47,7 +47,7 @@ class SudokuGame extends React.Component {
         if (event.ctrlKey && event.shiftKey) {
 
         } else if (event.ctrlKey) {
-            this.updateCell(x, y, { selected: true })
+            this.updateCell(x, y, { selected: !this.state.gameData[x][y].selected })
         } else {
             gameData.forEach(function(row, x) {
                 row.forEach(function(given, y) {
