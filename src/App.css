@@ -90,3 +90,11 @@
     position: absolute;
     right: 8px;
 }
+
+.possible-numbers {
+    color: #ff0000;
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    top: 58px;
+}

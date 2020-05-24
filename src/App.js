@@ -9,7 +9,7 @@ import { SudokuData } from './puzzle_data';
 
 function App() {
     return (
-        <Container>
+        <Container fluid="xl">
             <Row>
                 <Col>
                     <h1>Sudoku tool</h1>

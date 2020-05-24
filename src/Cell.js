@@ -9,6 +9,7 @@ const InitialCellData = {
     'fixed': [],
     'optionsTop': [],
     'optionsBottom': [],
+    'possibleNumbers': [],
     'x': null,
     'y': null
 }
@@ -19,11 +20,14 @@ class Cell extends React.Component {
         let cell;
         if (this.props.given) {
             cell = <span className="number given">{this.props.given}</span>;
+        } else if (this.props.number) {
+            cell = <span className="number ">{this.props.number}</span>
         } else {
             cell = <div>
                 <span className="options-top">{this.listToString(this.props.optionsTop)}</span>
-                <span className="number ">{this.props.number}</span>
+                <span className="number "/>
                 <span className="fixed-options">{this.listToString(this.props.fixed)}</span>
+                <span className="possible-numbers">{this.listToString(this.props.possibleNumbers)}</span>
                 <span className="options-bottom">{this.listToString(this.props.optionsBottom)}</span>
             </div>
         }

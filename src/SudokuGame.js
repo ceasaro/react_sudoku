@@ -3,6 +3,9 @@ import Block from './Block';
 import { validate } from './gameUtils';
 import { InitialCellData } from './Cell';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import cloneDeep from 'lodash/cloneDeep';
+import { Button } from 'react-bootstrap';
 
 function initializeData(data) {
     let gameData = [];
@@ -26,6 +29,7 @@ class SudokuGame extends React.Component {
             gameData: initializeData(props.data),
             activeX: null,
             activeY: null,
+            showAllOptions: false,
         };
     }
 
@@ -42,8 +46,7 @@ class SudokuGame extends React.Component {
         let sudokuGame = this;
         if (event.ctrlKey && event.shiftKey) {
 
-        }
-        else if (event.ctrlKey) {
+        } else if (event.ctrlKey) {
             this.updateCell(x, y, { selected: true })
         } else {
             gameData.forEach(function(row, x) {
@@ -52,7 +55,7 @@ class SudokuGame extends React.Component {
                 })
             });
             if (!gameData[x][y].given) {
-                this.setState({'activeX': x, 'activeY': y})
+                this.setState({ 'activeX': x, 'activeY': y })
                 sudokuGame.updateCell(x, y, { editable: true })
             }
         }
@@ -73,27 +76,54 @@ class SudokuGame extends React.Component {
         }
     }
 
+    showOptions() {
+        let showAllOptionsState = !this.state.showAllOptions;
+        this.setState({ showAllOptions: showAllOptionsState});
+        if (showAllOptionsState) {
+            this.updatePossibleNumbers();
+        } else {
+            this.clearPossibleNumbers();
+        }
+    }
+
     render() {
         return (
             <Row>
-                <div className="sudoku">
-                    <div className="sudoku-row">
-                        <Block data={this.getBlockData(0, 0)}
-                               handleCellClick={this.handleCellClick.bind(this)} />
-                        <Block data={this.getBlockData(0, 1)} handleCellClick={this.handleCellClick.bind(this)} />
-                        <Block data={this.getBlockData(0, 2)} handleCellClick={this.handleCellClick.bind(this)} />
-                    </div>
-                    <div className="sudoku-row">
-                        <Block data={this.getBlockData(1, 0)} handleCellClick={this.handleCellClick.bind(this)} />
-                        <Block data={this.getBlockData(1, 1)} handleCellClick={this.handleCellClick.bind(this)} />
-                        <Block data={this.getBlockData(1, 2)} handleCellClick={this.handleCellClick.bind(this)} />
-                    </div>
-                    <div className="sudoku-row">
-                        <Block data={this.getBlockData(2, 0)} handleCellClick={this.handleCellClick.bind(this)} />
-                        <Block data={this.getBlockData(2, 1)} handleCellClick={this.handleCellClick.bind(this)} />
-                        <Block data={this.getBlockData(2, 2)} handleCellClick={this.handleCellClick.bind(this)} />
-                    </div>
-                </div>
+                <Col xs={10}>
+                    <Row>
+                        <div className="sudoku">
+                            <div className="sudoku-row">
+                                <Block data={this.getBlockData(0, 0)}
+                                       handleCellClick={this.handleCellClick.bind(this)} />
+                                <Block data={this.getBlockData(0, 1)}
+                                       handleCellClick={this.handleCellClick.bind(this)} />
+                                <Block data={this.getBlockData(0, 2)}
+                                       handleCellClick={this.handleCellClick.bind(this)} />
+                            </div>
+                            <div className="sudoku-row">
+                                <Block data={this.getBlockData(1, 0)}
+                                       handleCellClick={this.handleCellClick.bind(this)} />
+                                <Block data={this.getBlockData(1, 1)}
+                                       handleCellClick={this.handleCellClick.bind(this)} />
+                                <Block data={this.getBlockData(1, 2)}
+                                       handleCellClick={this.handleCellClick.bind(this)} />
+                            </div>
+                            <div className="sudoku-row">
+                                <Block data={this.getBlockData(2, 0)}
+                                       handleCellClick={this.handleCellClick.bind(this)} />
+                                <Block data={this.getBlockData(2, 1)}
+                                       handleCellClick={this.handleCellClick.bind(this)} />
+                                <Block data={this.getBlockData(2, 2)}
+                                       handleCellClick={this.handleCellClick.bind(this)} />
+                            </div>
+                        </div>
+                    </Row>
+                </Col>
+                <Col>
+                    <h3>Menu</h3>
+                    <Button variant="outline-danger" block active={this.state.showAllOptions}
+                            onClick={(e) => this.showOptions()}>Show options</Button>
+                </Col>
             </Row>
         )
     }
@@ -101,11 +131,14 @@ class SudokuGame extends React.Component {
     setNumber(number) {
         let x = this.state.activeX;
         let y = this.state.activeY;
-        this.updateCell(x,y, {'number': null})
+        this.updateCell(x, y, { 'number': null })
         let numbers = this.getInvalidNumbers(x, y);
-        this.updateCell(x,y, {'number': number, 'faulty': numbers.has(number)})
-        this.updatePossibleNumbers();
+        this.updateCell(x, y, { 'number': number, 'faulty': numbers.has(number) })
+        if (this.state.showAllOptions) {
+            this.updatePossibleNumbers();
+        }
     }
+
     updateCell(x, y, newData) {
         this.setState(state => {
             const gameData = state.gameData.map((row, _x) => {
@@ -178,10 +211,10 @@ class SudokuGame extends React.Component {
 
     getBlockNumbers(x, y) {
         let numbers = new Set();
-        let blockX = Math.floor(x/3)*3;
-        let blockY = Math.floor(y/3)*3;
-        for (let _x=blockX; _x<blockX+3; _x++) {
-            for (let _y=blockY; _y<blockY+3; _y++) {
+        let blockX = Math.floor(x / 3) * 3;
+        let blockY = Math.floor(y / 3) * 3;
+        for (let _x = blockX; _x < blockX + 3; _x++) {
+            for (let _y = blockY; _y < blockY + 3; _y++) {
                 let cellData = this.state.gameData[_x][_y];
                 let number = cellData.given || cellData.number;
                 if (validate(number)) {
@@ -191,6 +224,30 @@ class SudokuGame extends React.Component {
             }
         }
         return numbers;
+    }
+
+    updatePossibleNumbers() {
+        let sudokuGame = this;
+        let newGameData = cloneDeep(this.state.gameData);
+        newGameData.forEach(function(rowData) {
+            rowData.forEach(function(cell) {
+                if (!cell.given && !cell.number) {
+                    let invalidNumbers = sudokuGame.getInvalidNumbers(cell.x, cell.y);
+                    cell.possibleNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(x => !invalidNumbers.has(x))
+                }
+            })
+        })
+        this.setState({ 'gameData': newGameData })
+    }
+
+     clearPossibleNumbers() {
+        let newGameData = cloneDeep(this.state.gameData);
+        newGameData.forEach(function(rowData) {
+            rowData.forEach(function(cell) {
+                cell.possibleNumbers = []
+            })
+        })
+        this.setState({ 'gameData': newGameData })
     }
 }
 
